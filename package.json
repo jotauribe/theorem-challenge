@@ -1,0 +1,47 @@
+{
+  "scripts": {
+    "build": "NODE_ENV=production webpack build",
+    "format": "prettier --write .",
+    "format-verify": "prettier --check .",
+    "lint": "eslint .",
+    "start": "NODE_ENV=development webpack serve",
+    "typecheck": "tsc",
+    "verify": "npm run typecheck && npm run lint && npm run format-verify"
+  },
+  "dependencies": {
+    "@babel/core": "^7.13.8",
+    "@babel/preset-react": "^7.12.13",
+    "@babel/preset-typescript": "^7.13.0",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
+    "@theorem/eslint-plugin": "^6.2.1",
+    "@theorem/react": "^6.0.1",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.1",
+    "@types/react-router-dom": "^5.1.7",
+    "@types/styled-components": "^5.1.7",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-styled-components": "^1.12.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^7.0.0",
+    "css-loader": "^5.1.1",
+    "eslint": "^7.21.0",
+    "prettier": "^2.2.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-jss": "^10.5.1",
+    "react-query": "^3.12.1",
+    "react-refresh": "^0.9.0",
+    "react-router-dom": "^5.2.0",
+    "style-loader": "^2.0.0",
+    "styled-components": "^5.2.1",
+    "typescript": "^4.2.2",
+    "webpack": "^5.24.2",
+    "webpack-cli": "^4.5.0"
+  },
+  "engine": {
+    "node": ">=14.14",
+    "npm": "^7.4.0"
+  },
+  "name": "@theorem/fe-exercise",
+  "private": true
+}

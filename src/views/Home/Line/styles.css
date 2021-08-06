@@ -1,0 +1,19 @@
+.avatar {
+  background: #b9b9b9;
+  border-radius: 50%;
+  height: 62px;
+  width: 62px;
+}
+
+.container {
+  align-items: center;
+  border-bottom: 1px solid #dad8e0;
+  display: flex;
+  gap: 20px;
+  padding: 18px 22px;
+}
+
+.name {
+  flex: 1;
+  font-size: 18px;
+}

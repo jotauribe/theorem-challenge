@@ -5,3 +5,8 @@ export type Person = {
   name: string;
 };
 export type Question = { id: string; text: string };
+export type Feedback = {
+  person: Person;
+  answers: FeedbackPiece[];
+  timestamp: number;
+};

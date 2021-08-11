@@ -1,13 +1,14 @@
 import styled from "styled-components";
 import { Card } from "src/Card";
 import { primaryLightColor, primaryMediumColor, borderColor } from "src/colors";
-import { usePeople } from "src/data";
+import { useProvidedFeedback } from "src/data";
 import { MainLayout } from "src/layouts";
 import { Link } from "src/links";
 import { Loading } from "../Loading";
 import { NotFound } from "../NotFound";
 import { Feedback } from "./Feedback";
 import AvatarComponent from "../../components/Avatar";
+import NoReviewsYet from "../../components/NoReviewsYet";
 
 const Avatar = styled(AvatarComponent)`
   border-radius: 50%;
@@ -55,29 +56,32 @@ type Props = {
 
 export function ReviewFeedback(props: Props) {
   const { personId } = props;
-  const people = usePeople();
-  if (people === "loading") return <Loading />;
-  const person = personId ? people.find((p) => p.id === personId) : undefined;
-  if (personId && !person) return <NotFound />;
+  const feedback = useProvidedFeedback();
+  if (feedback === "loading") return <Loading />;
+  const selectedPerson = personId
+    ? feedback.find((f) => f.person.id === personId)?.person
+    : undefined;
+  if (personId && !selectedPerson) return <NotFound />;
+  if (!feedback.length) return <NoReviewsYet />;
   return (
     <MainLayout title="Review Feedback | Honesto">
       <H1>Review Feedback</H1>
       <Card>
         <Layout>
           <PeopleList>
-            {people.map((p) => (
+            {feedback.map((f) => (
               <PersonLink
-                className={p.id === person?.id ? "current" : ""}
-                key={p.id}
-                href={`/review/${encodeURIComponent(p.id)}`}
+                className={f.person.id === selectedPerson?.id ? "current" : ""}
+                key={f.person.id}
+                href={`/review/${encodeURIComponent(f.person.id)}`}
               >
-                <Avatar src={p.avatarUrl} />
-                <div>{p.name}</div>
+                <Avatar src={f.person.avatarUrl} />
+                <div>{f.person.name}</div>
               </PersonLink>
             ))}
           </PeopleList>
           <FeedbackContainer>
-            {person && <Feedback person={person} />}
+            {selectedPerson && <Feedback person={selectedPerson} />}
           </FeedbackContainer>
         </Layout>
       </Card>

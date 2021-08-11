@@ -4,8 +4,9 @@ import { PrimaryButton, SecondaryButton } from "src/buttons";
 import { Person, Question, useQuestionsFor } from "src/data";
 import { borderColor } from "src/colors";
 import { Loading } from "../Loading";
+import AvatarComponent from "../../components/Avatar";
 
-const Avatar = styled.img`
+const Avatar = styled(AvatarComponent)`
   border-radius: 50%;
   margin-right: 30px;
 `;
@@ -66,12 +67,7 @@ export function View(props: Props) {
     <MainLayout title="Give Feedback | Honesto">
       <Container>
         <QuestionContainer>
-          <Avatar
-            alt="User avatar"
-            height={100}
-            width={100}
-            src={person.avatarUrl}
-          />
+          <Avatar height={100} width={100} src={person.avatarUrl} />
           <H1>{question.text}</H1>
         </QuestionContainer>
         <Textarea

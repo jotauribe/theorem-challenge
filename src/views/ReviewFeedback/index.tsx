@@ -7,8 +7,9 @@ import { Link } from "src/links";
 import { Loading } from "../Loading";
 import { NotFound } from "../NotFound";
 import { Feedback } from "./Feedback";
+import AvatarComponent from "../../components/Avatar";
 
-const Avatar = styled.img`
+const Avatar = styled(AvatarComponent)`
   border-radius: 50%;
   height: 50px;
   width: 50px;
@@ -70,7 +71,7 @@ export function ReviewFeedback(props: Props) {
                 key={p.id}
                 href={`/review/${encodeURIComponent(p.id)}`}
               >
-                <Avatar alt="User avatar" src={p.avatarUrl} />
+                <Avatar src={p.avatarUrl} />
                 <div>{p.name}</div>
               </PersonLink>
             ))}

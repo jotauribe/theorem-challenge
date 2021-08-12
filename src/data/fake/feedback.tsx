@@ -1,4 +1,5 @@
-import { Feedback, FeedbackPiece, Person } from "../types";
+import { v4 as uuidv4 } from "uuid";
+import { Feedback, PartialFeedBack, Person } from "../types";
 import { pretendNetwork } from "./pretendNetwork";
 
 function findMaximumItem<Item>(
@@ -17,13 +18,22 @@ function findMaximumItem<Item>(
 
 const state: Feedback[] = [];
 
-export async function addFeedbackFor(person: Person, answers: FeedbackPiece[]) {
+export async function addFeedbackFor(
+  person: Person,
+  feedback: PartialFeedBack
+) {
   await pretendNetwork();
-  state.push({
-    answers,
-    person,
-    timestamp: Date.now(),
-  });
+  const index = state.findIndex((f) => f.id === feedback.id);
+  if (index > -1)
+    state[index] = { ...state[index], person, ...feedback } as Feedback;
+  else {
+    state.push({
+      id: uuidv4(),
+      person,
+      answers: feedback.answers,
+      timestamp: Date.now(),
+    });
+  }
 }
 
 export async function getLatestFeedbackFor(
@@ -37,8 +47,8 @@ export async function getLatestFeedbackFor(
     feedbackForPerson,
     (item) => item.timestamp
   );
-  if (!latestFeedback) return [];
-  return latestFeedback.answers;
+  if (!latestFeedback) return { answers: [] };
+  return latestFeedback;
 }
 
 export async function getProvidedFeedback() {

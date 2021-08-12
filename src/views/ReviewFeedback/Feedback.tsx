@@ -34,7 +34,7 @@ export function Feedback(props: Props) {
           Loading...
         </Loader>
       ) : (
-        feedback.map((row) => (
+        feedback.answers.map((row) => (
           <FeedbackSection
             key={row.question.id}
             question={row.question.text}

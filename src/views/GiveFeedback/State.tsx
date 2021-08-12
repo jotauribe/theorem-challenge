@@ -1,36 +1,58 @@
 import { useState } from "react";
-import { Person, useAddFeedbackFor, useQuestionsFor } from "src/data";
+import {
+  Feedback,
+  Person,
+  useAddFeedbackFor,
+  useFeedbackFor,
+  useQuestionsFor,
+} from "src/data";
 import { Loading } from "../Loading";
 import { NotFound } from "../NotFound";
 import { Submitted } from "./Submitted";
 import { Submitting } from "./Submitting";
+import { ProgressSaved } from "./ProgressSaved";
 import { View } from "./View";
+import {
+  buildAnswers,
+  areAllQuestionsAnswered,
+  getDefaultValue,
+} from "./GiveFeedback.utils";
 
 type Props = {
   person: Person;
   questionId: string;
+  feedbackId?: string;
 };
 
 export function State(props: Props) {
-  const { person, questionId } = props;
-
+  const { person, questionId, feedbackId = "" } = props;
   // Map from quesion id to answers
-  const [answers, setAnswers] = useState<Map<string, string>>(new Map());
-
   const submission = useAddFeedbackFor(person);
-
+  const feedback = useFeedbackFor(person);
   const questions = useQuestionsFor(person);
+  const [answers, setAnswers] = useState<Map<string, string>>(new Map());
+  const prevAnswers = (feedback as Feedback)?.answers || [];
+
   if (questions === "loading") return <Loading />;
   const question = questions.byId(questionId);
   if (!question) return <NotFound />;
 
   if (submission.status === "loading") return <Submitting />;
-  if (submission.status === "success") return <Submitted person={person} />;
+  if (submission.status === "success") {
+    // prettier-ignore
+    const isCompleted = areAllQuestionsAnswered(questions.all, answers, prevAnswers);
+    if (isCompleted) return <Submitted person={person} />;
+    else return <ProgressSaved />;
+  }
 
   return (
     <View
-      defaultValue={answers.get(question.id) || ""}
       key={[person.id, questionId].join("-")}
+      answers={answers}
+      defaultValue={getDefaultValue(question.id, feedback, answers)}
+      person={person}
+      question={question}
+      feedbackId={feedbackId}
       onChange={(newAnswer) =>
         setAnswers((prev) => {
           // Create a copy to avoid mutation
@@ -40,17 +62,11 @@ export function State(props: Props) {
         })
       }
       onSubmit={() => {
-        submission.mutate(
-          questions.all.map((q) => {
-            return {
-              question: q,
-              answer: answers.get(q.id) || "",
-            };
-          })
-        );
+        submission.mutate({
+          id: feedbackId,
+          answers: [...prevAnswers, ...buildAnswers(questions.all, answers)],
+        });
       }}
-      person={person}
-      question={question}
     />
   );
 }

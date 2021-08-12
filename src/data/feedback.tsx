@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { FeedbackPiece, Person } from "./types";
+import { PartialFeedBack, Person } from "./types";
 import {
   addFeedbackFor,
   getLatestFeedbackFor,
@@ -9,11 +9,12 @@ import {
 export function useAddFeedbackFor(person: Person) {
   const queryClient = useQueryClient();
   return useMutation(
-    (answers: FeedbackPiece[]) => addFeedbackFor(person, answers),
+    (feedback: PartialFeedBack) => addFeedbackFor(person, feedback),
     {
       onSuccess: () => {
-        queryClient.removeQueries(["feedback", person.id]);
         queryClient.removeQueries(["feedback"]);
+        queryClient.removeQueries("people-feedback");
+        queryClient.removeQueries(["feedback", person.id]);
       },
     }
   );

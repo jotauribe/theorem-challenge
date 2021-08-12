@@ -26,12 +26,16 @@ type Props = {
 };
 
 export function SecondaryButton(props: Props) {
-  const { action, children } = props;
+  const { action, children, ...otherProps } = props;
   if (typeof action === "string")
     return (
-      <Button as={Link} href={action}>
+      <Button as={Link} href={action} {...otherProps}>
         {children}
       </Button>
     );
-  return <Button onClick={action}>{children}</Button>;
+  return (
+    <Button onClick={action} {...otherProps}>
+      {children}
+    </Button>
+  );
 }

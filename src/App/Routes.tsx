@@ -15,7 +15,14 @@ export function Routes() {
         path="/give/:personId"
         render={(props) => {
           const { personId } = props.match.params;
-          return <GiveFeedback key={personId} personId={personId} />;
+          const query = new URLSearchParams(props.location.search);
+          return (
+            <GiveFeedback
+              key={personId}
+              personId={personId}
+              feedbackId={query.get("feedbackId") || ""}
+            />
+          );
         }}
       />
       <Route
@@ -23,7 +30,14 @@ export function Routes() {
         path="/give/:personId/:questionId"
         render={(props) => {
           const { personId, questionId } = props.match.params;
-          return <GiveFeedback personId={personId} questionId={questionId} />;
+          const query = new URLSearchParams(props.location.search);
+          return (
+            <GiveFeedback
+              personId={personId}
+              questionId={questionId}
+              feedbackId={query.get("feedbackId") || ""}
+            />
+          );
         }}
       />
       <Route exact path="/review">

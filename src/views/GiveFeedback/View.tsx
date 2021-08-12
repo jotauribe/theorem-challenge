@@ -48,21 +48,37 @@ const Textarea = styled.textarea`
   resize: vertical;
   width: 100%;
 `;
+const TextButton = styled(SecondaryButton)`
+  border: none;
+`;
 
 type Props = {
+  answers: Map<string, string>;
   defaultValue: string;
   onChange: (answer: string) => void;
   onSubmit: () => void;
   person: Person;
   question: Question;
+  feedbackId?: string;
 };
 
 export function View(props: Props) {
-  const { defaultValue, onChange, onSubmit, person, question } = props;
+  const {
+    answers,
+    defaultValue,
+    onChange,
+    onSubmit,
+    person,
+    question,
+    feedbackId,
+  } = props;
   const questions = useQuestionsFor(person);
   if (questions === "loading") return <Loading />;
   const nextQuestion = questions.next(question);
   const prevQuestion = questions.prev(question);
+  const queryParams = feedbackId
+    ? `feedbackId=${encodeURIComponent(feedbackId)}`
+    : "";
   return (
     <MainLayout title="Give Feedback | Honesto">
       <Container>
@@ -81,21 +97,26 @@ export function View(props: Props) {
               <SecondaryButton
                 action={`/give/${encodeURIComponent(
                   person.id
-                )}/${encodeURIComponent(prevQuestion.id)}`}
+                )}/${encodeURIComponent(prevQuestion.id)}?${queryParams}`}
               >
                 Previous
               </SecondaryButton>
             )}
           </div>
           <div>
+            {answers.size > 0 && (
+              <TextButton action={onSubmit}>Save Progress</TextButton>
+            )}
             {nextQuestion ? (
-              <PrimaryButton
-                action={`/give/${encodeURIComponent(
-                  person.id
-                )}/${encodeURIComponent(nextQuestion.id)}`}
-              >
-                Next
-              </PrimaryButton>
+              <>
+                <PrimaryButton
+                  action={`/give/${encodeURIComponent(
+                    person.id
+                  )}/${encodeURIComponent(nextQuestion.id)}?${queryParams}`}
+                >
+                  Next
+                </PrimaryButton>
+              </>
             ) : (
               <PrimaryButton action={onSubmit}>Complete</PrimaryButton>
             )}

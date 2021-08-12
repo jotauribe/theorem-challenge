@@ -4,6 +4,7 @@ import { primaryLightColor, primaryColor } from "src/colors";
 import { Link } from "src/links";
 
 const Button = styled.button`
+  display: flex;
   background-color: transparent;
   border: 1px solid ${primaryColor};
   border-radius: 4px;
@@ -14,6 +15,7 @@ const Button = styled.button`
   padding: 11px 29px;
   transition: 200ms ease-out;
   text-decoration: none;
+  opacity: ${(props) => (props.disabled ? "0.5" : "1")};
   &:hover {
     background-color: ${primaryLightColor};
     transition: none;
@@ -21,8 +23,10 @@ const Button = styled.button`
 `;
 
 type Props = {
+  disabled?: boolean;
   action: string | (() => void);
   children: ReactNode;
+  onClick?: () => void;
 };
 
 export function SecondaryButton(props: Props) {

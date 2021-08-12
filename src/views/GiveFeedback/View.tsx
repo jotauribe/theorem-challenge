@@ -17,6 +17,15 @@ const Buttons = styled.div`
   justify-content: space-between;
 `;
 
+const PrimaryButtonsContainer = styled.div`
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  & > * {
+    margin-right: 1rem;
+  }
+`;
+
 const Container = styled.div`
   background-color: white;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
@@ -48,9 +57,6 @@ const Textarea = styled.textarea`
   resize: vertical;
   width: 100%;
 `;
-const TextButton = styled(SecondaryButton)`
-  border: none;
-`;
 
 type Props = {
   answers: Map<string, string>;
@@ -60,6 +66,16 @@ type Props = {
   person: Person;
   question: Question;
   feedbackId?: string;
+};
+
+const createUrlToNextQuestion = (
+  person: Person,
+  nextQuestion: Question,
+  queryParams: string
+) => {
+  return `/give/${encodeURIComponent(person.id)}/${encodeURIComponent(
+    nextQuestion?.id
+  )}?${queryParams}`;
 };
 
 export function View(props: Props) {
@@ -76,9 +92,13 @@ export function View(props: Props) {
   if (questions === "loading") return <Loading />;
   const nextQuestion = questions.next(question);
   const prevQuestion = questions.prev(question);
-  const queryParams = feedbackId
-    ? `feedbackId=${encodeURIComponent(feedbackId)}`
-    : "";
+  const isNextButtonEnabled = (answers.get(question.id)?.length || 0) > 0;
+  // prettier-ignore
+  const queryParams = feedbackId ? `feedbackId=${encodeURIComponent(feedbackId)}` : "";
+  // prettier-ignore
+  const urlToNextQuestion = createUrlToNextQuestion(person, nextQuestion as Question, queryParams);
+  const nextButtonAction = isNextButtonEnabled ? urlToNextQuestion : () => {};
+
   return (
     <MainLayout title="Give Feedback | Honesto">
       <Container>
@@ -103,24 +123,29 @@ export function View(props: Props) {
               </SecondaryButton>
             )}
           </div>
-          <div>
+          <PrimaryButtonsContainer>
             {answers.size > 0 && (
-              <TextButton action={onSubmit}>Save Progress</TextButton>
+              <SecondaryButton action={onSubmit}>Save Progress</SecondaryButton>
+            )}
+            {nextQuestion && (
+              <SecondaryButton
+                action={urlToNextQuestion}
+                onClick={() => onChange("Question Skipped")}
+              >
+                Skip
+              </SecondaryButton>
             )}
             {nextQuestion ? (
-              <>
-                <PrimaryButton
-                  action={`/give/${encodeURIComponent(
-                    person.id
-                  )}/${encodeURIComponent(nextQuestion.id)}?${queryParams}`}
-                >
-                  Next
-                </PrimaryButton>
-              </>
+              <PrimaryButton
+                disabled={!isNextButtonEnabled}
+                action={nextButtonAction}
+              >
+                Next
+              </PrimaryButton>
             ) : (
               <PrimaryButton action={onSubmit}>Complete</PrimaryButton>
             )}
-          </div>
+          </PrimaryButtonsContainer>
         </Buttons>
       </Container>
     </MainLayout>
